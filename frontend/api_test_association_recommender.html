@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Association Rules Recommender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            max-width: 500px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #FF5722;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .recommendation {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Product Recommendation using Association Rules</h2>
+
+<form id="recommendForm">
+    <label for="product">Enter Product Name:</label>
+    <input type="text" id="product" name="product" placeholder="e.g., Bread, Milk" required>
+
+    <button type="submit">Get Recommendations</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    document.getElementById('recommendForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const product = document.getElementById('product').value;
+
+        const data = {
+            product: product
+        };
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/v1/models/association-rules-recommender/recommendations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            let resultHTML = `<p>Product Purchased: <strong>${result.product_purchased}</strong></p>`;
+            resultHTML += `<p>Confidence: ${(result.confidence * 100).toFixed(2)}%</p>`;
+            resultHTML += '<p>Recommended Products:</p>';
+            result.recommended_products.forEach(prod => {
+                resultHTML += `<div class="recommendation">${prod}</div>`;
+            });
+            document.getElementById('result').innerHTML = resultHTML;
+
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('result').innerText = 'An error occurred while getting recommendations.';
+        }
+    });
+</script>
+
+</body>
+</html>

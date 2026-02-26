@@ -50,7 +50,15 @@ CORS(
 # joblib is used to load a trained model so that the API can serve ML predictions
 decisiontree_classifier_baseline = joblib.load('./model/decisiontree_classifier_baseline.pkl')
 decisiontree_regressor_optimum = joblib.load('./model/decisiontree_regressor_optimum.pkl')
+naive_bayes_classifier = joblib.load('./model/naive_Bayes_classifier_optimum.pkl')
+knn_classifier = joblib.load('./model/knn_classifier_optimum.pkl')
+svm_classifier = joblib.load('./model/support_vector_classifier_optimum.pkl')
+random_forest_classifier = joblib.load('./model/random_forest_classifier_optimum.pkl')
+
 label_encoders_1b = joblib.load('./model/label_encoders_1b.pkl')
+label_encoders_2 = joblib.load('./model/label_encoders_2.pkl')
+label_encoders_4 = joblib.load('./model/label_encoders_4.pkl')
+scaler_4 = joblib.load('./model/scaler_4.pkl')
 
 # Defines an HTTP endpoint
 @app.route('/api/v1/models/decision-tree-classifier/predictions', methods=['POST'])
@@ -117,7 +125,7 @@ def predict_decision_tree_regressor():
     data = request.get_json()
     # Expected input keys:
     # 'PaymentDate', 'CustomerType', 'BranchSubCounty',
-    # 'ProductCategoryName', 'QuantityOrdered', 'PercentageProfitPerUnit'
+    # 'ProductCategoryName', 'QuantityOrdered', 'Percenta3geProfitPerUnit'
 
     # Create a DataFrame based on the input
     new_data = pd.DataFrame([data])
@@ -205,7 +213,141 @@ def predict_decision_tree_regressor():
 #     -Body $body `
 #     -ContentType "application/json"
 
-# This ensures the Flask web server only starts when you run this file directly
+@app.route('/api/v1/models/naive-bayes-classifier/predictions', methods=['POST'])
+def predict_naive_bayes_classifier():
+    data = request.get_json()
+    new_data = pd.DataFrame([{
+        'monthly_fee': data.get('monthly_fee'),
+        'customer_age': data.get('customer_age'),
+        'support_calls': data.get('support_calls')
+    }])
+
+    expected_features = [
+        'monthly_fee',
+        'customer_age',
+        'support_calls'
+    ]
+
+    new_data = new_data[expected_features]
+    prediction = naive_bayes_classifier.predict(new_data)[0]
+    return jsonify({'Predicted Class = ': int(prediction)})
+
+# *1* Sample JSON POST values
+# {
+#     "monthly_fee": 60,
+#     "customer_age": 30,
+#     "support_calls": 1
+# }
+
+@app.route('/api/v1/models/knn-classifier/predictions', methods=['POST'])
+def predict_knn_classifier():
+    data = request.get_json()
+    new_data = pd.DataFrame([{
+        'monthly_fee': data.get('monthly_fee'),
+        'customer_age': data.get('customer_age'),
+        'support_calls': data.get('support_calls')
+    }])
+
+    expected_features = [
+        'monthly_fee',
+        'customer_age',
+        'support_calls'
+    ]
+
+    new_data = new_data[expected_features]
+    # Scale the data before prediction (KNN requires scaling)
+    new_data_scaled = scaler_4.transform(new_data)
+    prediction = knn_classifier.predict(new_data_scaled)[0]
+    return jsonify({'Predicted Class = ': int(prediction)})
+
+# *1* Sample JSON POST values
+# {
+#     "monthly_fee": 60,
+#     "customer_age": 30,
+#     "support_calls": 1
+# }
+
+@app.route('/api/v1/models/svm-classifier/predictions', methods=['POST'])
+def predict_svm_classifier():
+    data = request.get_json()
+    new_data = pd.DataFrame([{
+        'monthly_fee': data.get('monthly_fee'),
+        'customer_age': data.get('customer_age'),
+        'support_calls': data.get('support_calls')
+    }])
+
+    expected_features = [
+        'monthly_fee',
+        'customer_age',
+        'support_calls'
+    ]
+
+    new_data = new_data[expected_features]
+    # Scale the data before prediction (SVM requires scaling)
+    new_data_scaled = scaler_4.transform(new_data)
+    prediction = svm_classifier.predict(new_data_scaled)[0]
+    return jsonify({'Predicted Class = ': int(prediction)})
+
+# *1* Sample JSON POST values
+# {
+#     "monthly_fee": 60,
+#     "customer_age": 30,
+#     "support_calls": 1
+# }
+
+@app.route('/api/v1/models/random-forest-classifier/predictions', methods=['POST'])
+def predict_random_forest_classifier():
+    data = request.get_json()
+    new_data = pd.DataFrame([{
+        'monthly_fee': data.get('monthly_fee'),
+        'customer_age': data.get('customer_age'),
+        'support_calls': data.get('support_calls')
+    }])
+
+    expected_features = [
+        'monthly_fee',
+        'customer_age',
+        'support_calls'
+    ]
+
+    new_data = new_data[expected_features]
+    prediction = random_forest_classifier.predict(new_data)[0]
+    return jsonify({'Predicted Class = ': int(prediction)})
+
+# *1* Sample JSON POST values
+# {
+#     "monthly_fee": 60,
+#     "customer_age": 30,
+#     "support_calls": 1
+# }
+
+@app.route('/api/v1/models/association-rules-recommender/recommendations', methods=['POST'])
+def predict_association_rules_recommender():
+    data = request.get_json()
+    # Expected input: a product purchased
+    product = data.get('product')
+
+    # Since association rules require specific handling,
+    # this is a placeholder that returns a mock recommendation
+    # In a real scenario, you would load association rules and find products related to the input product
+    # For now, we'll return a simple structure
+
+    recommendations = {
+        'product_purchased': product,
+        'recommended_products': [
+            'Product A',
+            'Product B',
+            'Product C'
+        ],
+        'confidence': 0.85
+    }
+    return jsonify(recommendations)
+
+# *1* Sample JSON POST values
+# {
+#     "product": "Bread"
+# }
+
 # (e.g., `python api.py`), and not if you import api.py from another script or test.
 
 # __name__ is a special variable in Python. When you run a script directly,

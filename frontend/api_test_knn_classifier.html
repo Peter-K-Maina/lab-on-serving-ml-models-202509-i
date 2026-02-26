@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KNN Classifier - Predict Customer Churn</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            max-width: 500px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #FF9800;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Predict Customer Churn using K-Nearest Neighbors (KNN)</h2>
+
+<form id="predictForm">
+    <label for="monthly_fee">Monthly Fee:</label>
+    <input type="number" id="monthly_fee" name="monthly_fee" required>
+
+    <label for="customer_age">Customer Age:</label>
+    <input type="number" id="customer_age" name="customer_age" required>
+
+    <label for="support_calls">Support Calls:</label>
+    <input type="number" id="support_calls" name="support_calls" required>
+
+    <button type="submit">Predict</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    document.getElementById('predictForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const monthly_fee = parseFloat(document.getElementById('monthly_fee').value);
+        const customer_age = parseFloat(document.getElementById('customer_age').value);
+        const support_calls = parseFloat(document.getElementById('support_calls').value);
+
+        const data = {
+            monthly_fee: monthly_fee,
+            customer_age: customer_age,
+            support_calls: support_calls
+        };
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/v1/models/knn-classifier/predictions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            document.getElementById('result').innerText = 'Prediction: ' + result['Predicted Class = '];
+
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('result').innerText = 'An error occurred while making the prediction.';
+        }
+    });
+</script>
+
+</body>
+</html>
