@@ -4,23 +4,23 @@
 
 ## Student Details and Individual Member Contributions
 
-**Name of the team on GitHub Classroom:**
+**202509-i**
 
-**081000 - Peter Kamau Maina:**
+**Member 1:**
 
 | **Details**                                                                                                                           | **Comment** |
 |:--------------------------------------------------------------------------------------------------------------------------------------|:------------|
 | **Student 081000**                                                                                                                        |             |
-| **PeterMaina**                                                                                                                              |             |
-| **The Advanced step** |             |
+| **Peter Maina**                                                                                                                              |             |
+| **The Advanced step - Updated (api.py) to include end-points adding a classifier that predicts the cluster to which a client belongs to, created a web page demonstrating the use of the API and implemented basic error handling** |             |
 
 **Member 2:**
 
 | **Details**                                                                                                                           | **Comment** |
 |:--------------------------------------------------------------------------------------------------------------------------------------|:------------|
-| **Student ID**                                                                                                                        |             |
-| **Name**                                                                                                                              |             |
-| **What part of the lab did you personally<br/>contribute to (provide a link to the<br/>branch(es)), and what did you learn from it?** |             |
+| **100785**                                                                                                                        |             |
+| **Adrian Kemei**                                                                                                                              |             |
+| **Update (api.py) to include end-points to serve the Naive Bayes classifier, K-Nearest Neighbors (kNN) classifier, Support Vector Machine (SVM) classifier and the Random Forest classifier** |             |
 
 **Member 3:**
 
@@ -48,19 +48,18 @@
 
 ## Chosen Level of Difficulty
 
-**Specify the chosen level of difficulty** (baseline, intermediate, or advanced):
-
+**baseline, intermediate, and advanced** 
 ## Video Demonstration
 
 Submit the link to a short video (not more than 5 minutes) demonstrating your solution. Please ensure that the lecturer has rights to view the video.
 
 Note that you are required to submit the link to the video and NOT the video itself. The video should NOT be uploaded to your repository—that would be a misuse of GitHub.
 
-**Link to the video:**
+**Link to the video: **
 
 ## Public URL
 
-**Specify the public URL to the Gradio/Streamlit App**:
+**Specify the public URL to the Gradio/Streamlit App: https://lab-on-serving-ml-models-202509-i.streamlit.app/**:
 
 ---
 
