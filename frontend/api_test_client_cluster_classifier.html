@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Client Cluster Classifier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            max-width: 800px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 16px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+        }
+        .error {
+            color: #b00020;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Predict Client Cluster</h2>
+<p>Fill all fields below to predict the cluster a client belongs to.</p>
+
+<form id="clusterForm">
+    <div class="grid">
+        <div><label for="Administrative">Administrative</label><input type="number" id="Administrative" required></div>
+        <div><label for="Administrative_Duration">Administrative Duration</label><input type="number" step="any" id="Administrative_Duration" required></div>
+
+        <div><label for="Informational">Informational</label><input type="number" id="Informational" required></div>
+        <div><label for="Informational_Duration">Informational Duration</label><input type="number" step="any" id="Informational_Duration" required></div>
+
+        <div><label for="ProductRelated">Product Related</label><input type="number" id="ProductRelated" required></div>
+        <div><label for="ProductRelated_Duration">Product Related Duration</label><input type="number" step="any" id="ProductRelated_Duration" required></div>
+
+        <div><label for="BounceRates">Bounce Rates</label><input type="number" step="any" id="BounceRates" required></div>
+        <div><label for="ExitRates">Exit Rates</label><input type="number" step="any" id="ExitRates" required></div>
+
+        <div><label for="PageValues">Page Values</label><input type="number" step="any" id="PageValues" required></div>
+        <div><label for="SpecialDay">Special Day</label><input type="number" step="any" id="SpecialDay" required></div>
+
+        <div>
+            <label for="Month">Month</label>
+            <select id="Month" required>
+                <option value="">Select month</option>
+                <option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option>
+                <option>May</option><option>June</option><option>Jul</option><option>Aug</option>
+                <option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option>
+            </select>
+        </div>
+        <div><label for="OperatingSystems">Operating Systems</label><input type="number" id="OperatingSystems" required></div>
+
+        <div><label for="Browser">Browser</label><input type="number" id="Browser" required></div>
+        <div><label for="Region">Region</label><input type="number" id="Region" required></div>
+
+        <div><label for="TrafficType">Traffic Type</label><input type="number" id="TrafficType" required></div>
+        <div>
+            <label for="VisitorType">Visitor Type</label>
+            <select id="VisitorType" required>
+                <option value="">Select visitor type</option>
+                <option>Returning_Visitor</option>
+                <option>New_Visitor</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="Weekend">Weekend</label>
+            <select id="Weekend" required>
+                <option value="">Select weekend flag</option>
+                <option>TRUE</option>
+                <option>FALSE</option>
+            </select>
+        </div>
+    </div>
+
+    <button type="submit">Predict Cluster</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    const requiredFields = [
+        'Administrative', 'Administrative_Duration', 'Informational', 'Informational_Duration',
+        'ProductRelated', 'ProductRelated_Duration', 'BounceRates', 'ExitRates', 'PageValues',
+        'SpecialDay', 'Month', 'OperatingSystems', 'Browser', 'Region', 'TrafficType', 'VisitorType', 'Weekend'
+    ];
+
+    document.getElementById('clusterForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const resultDiv = document.getElementById('result');
+
+        const payload = {};
+        for (const field of requiredFields) {
+            const element = document.getElementById(field);
+            const value = element.value;
+            if (value === '' || value === null) {
+                resultDiv.innerHTML = '<span class="error">Missing input: ' + field + '</span>';
+                return;
+            }
+            payload[field] = value;
+        }
+
+        const numericFields = [
+            'Administrative', 'Administrative_Duration', 'Informational', 'Informational_Duration',
+            'ProductRelated', 'ProductRelated_Duration', 'BounceRates', 'ExitRates', 'PageValues',
+            'SpecialDay', 'OperatingSystems', 'Browser', 'Region', 'TrafficType'
+        ];
+
+        for (const field of numericFields) {
+            payload[field] = parseFloat(payload[field]);
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/v1/models/client-cluster-classifier/predictions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                const details = result.missing_fields ? (' Missing: ' + result.missing_fields.join(', ')) : '';
+                resultDiv.innerHTML = '<span class="error">' + (result.error || 'Request failed.') + details + '</span>';
+                return;
+            }
+
+            resultDiv.innerHTML =
+                '<strong>Predicted Cluster:</strong> ' + result['Predicted Cluster = '] +
+                '<br><strong>Model Source:</strong> ' + (result.model_source || 'N/A');
+        } catch (error) {
+            resultDiv.innerHTML = '<span class="error">An error occurred while calling the API.</span>';
+            console.error(error);
+        }
+    });
+</script>
+
+</body>
+</html>

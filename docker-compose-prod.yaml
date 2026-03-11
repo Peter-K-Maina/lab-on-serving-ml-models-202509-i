@@ -1,10 +1,32 @@
 services:
   flask-gunicorn-app:
     image: servingmlmodels-flask-gunicorn-app:1.0.0
+    build:
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile.flask-gunicorn-app
+    expose:
+      - "8000"
+    environment:
+      GUNICORN_WORKERS: "5"
+      GUNICORN_THREADS: "2"
+      GUNICORN_TIMEOUT: "120"
+      GUNICORN_LOG_LEVEL: "info"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     restart: always
 
   nginx:
     image: servingmlmodels-nginx:1.0.0
+    build:
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile.nginx
+    depends_on:
+      flask-gunicorn-app:
+        condition: service_healthy
     ports:
       - "80:80"
       - "443:443"

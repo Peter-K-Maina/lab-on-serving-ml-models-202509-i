@@ -16,7 +16,6 @@ services:
       - "443:443"
     volumes:
       - ./container-volumes/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - nginx-certs:/etc/nginx/certs:ro
       - nginx-frontend:/usr/share/nginx/html:ro
     restart: always
 
@@ -57,13 +56,6 @@ volumes:
       type: none # Binds to the path specified in "device" instead of creating a new directory/file on the host
       o: bind # Confirms that Docker maps a directory/file on the host directly into the container
       device: ./container-volumes/ubuntu/home-student # The path on the host machine that will be mounted into the container
-
-  nginx-certs:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./container-volumes/nginx/certs
 
   nginx-frontend:
     driver: local

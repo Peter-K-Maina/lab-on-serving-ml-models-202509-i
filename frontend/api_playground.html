@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serving ML Models API Playground</title>
+    <link rel="stylesheet" href="api_playground.css">
+</head>
+<body>
+    <div class="background-shape shape-a"></div>
+    <div class="background-shape shape-b"></div>
+
+    <main class="container">
+        <header class="hero">
+            <p class="kicker">BBT 4206</p>
+            <h1>Serving ML Models API Playground</h1>
+            <p class="subtitle">Interactive examples for testing the Flask API using plain HTML, CSS, and JavaScript.</p>
+
+            <div class="base-url-row">
+                <label for="baseUrl">API Base URL</label>
+                <input id="baseUrl" type="url" value="http://127.0.0.1:5000" placeholder="http://127.0.0.1:5000">
+            </div>
+        </header>
+
+        <section class="grid">
+            <article class="card">
+                <h2>1) Health Check</h2>
+                <p>Calls <code>GET /api/v1/health</code></p>
+                <button id="btnHealth" type="button">Run Health Check</button>
+                <pre id="healthOutput" class="output">Click the button to call the API.</pre>
+            </article>
+
+            <article class="card">
+                <h2>2) Classifier Predictions</h2>
+                <p>Use one payload for five classifier endpoints.</p>
+                <form id="classifierForm">
+                    <label for="classifierModel">Model Endpoint</label>
+                    <select id="classifierModel" required>
+                        <option value="decision-tree-classifier">decision-tree-classifier</option>
+                        <option value="naive-bayes-classifier">naive-bayes-classifier</option>
+                        <option value="knn-classifier">knn-classifier</option>
+                        <option value="svm-classifier">svm-classifier</option>
+                        <option value="random-forest-classifier">random-forest-classifier</option>
+                    </select>
+
+                    <label for="monthly_fee">monthly_fee</label>
+                    <input id="monthly_fee" type="number" step="any" value="60" required>
+
+                    <label for="customer_age">customer_age</label>
+                    <input id="customer_age" type="number" step="any" value="30" required>
+
+                    <label for="support_calls">support_calls</label>
+                    <input id="support_calls" type="number" step="any" value="1" required>
+
+                    <button type="submit">Predict Class</button>
+                </form>
+                <pre id="classifierOutput" class="output"></pre>
+            </article>
+
+            <article class="card">
+                <h2>3) Decision Tree Regressor</h2>
+                <p>Calls <code>POST /api/v1/models/decision-tree-regressor/predictions</code></p>
+                <form id="regressorForm">
+                    <label for="PaymentDate">PaymentDate</label>
+                    <input id="PaymentDate" type="date" value="2027-11-13" required>
+
+                    <label for="CustomerType">CustomerType</label>
+                    <select id="CustomerType" required>
+                        <option value="Business">Business</option>
+                        <option value="Individual">Individual</option>
+                    </select>
+
+                    <label for="BranchSubCounty">BranchSubCounty</label>
+                    <input id="BranchSubCounty" type="text" value="Kilimani" required>
+
+                    <label for="ProductCategoryName">ProductCategoryName</label>
+                    <input id="ProductCategoryName" type="text" value="Meat-Based Dishes" required>
+
+                    <label for="QuantityOrdered">QuantityOrdered</label>
+                    <input id="QuantityOrdered" type="number" min="1" value="8" required>
+
+                    <button type="submit">Predict Profit %</button>
+                </form>
+                <pre id="regressorOutput" class="output"></pre>
+            </article>
+
+            <article class="card">
+                <h2>4) Association Recommender</h2>
+                <p>Calls <code>POST /api/v1/models/association-rules-recommender/recommendations</code></p>
+                <form id="associationForm">
+                    <label for="product">product</label>
+                    <input id="product" type="text" value="Bread" required>
+                    <button type="submit">Get Recommendations</button>
+                </form>
+                <pre id="associationOutput" class="output"></pre>
+            </article>
+
+            <article class="card wide">
+                <h2>5) Generic JSON Request (Cluster Example Included)</h2>
+                <p>Use this for endpoints with many fields, like the cluster classifier.</p>
+                <form id="genericForm">
+                    <label for="genericEndpoint">Endpoint Path</label>
+                    <input id="genericEndpoint" type="text" value="/api/v1/models/client-cluster-classifier/predictions" required>
+
+                    <label for="genericPayload">JSON Payload</label>
+                    <textarea id="genericPayload" rows="14" spellcheck="false">{
+  "Administrative": 0,
+  "Administrative_Duration": 0,
+  "Informational": 0,
+  "Informational_Duration": 0,
+  "ProductRelated": 1,
+  "ProductRelated_Duration": 20,
+  "BounceRates": 0.2,
+  "ExitRates": 0.2,
+  "PageValues": 0,
+  "SpecialDay": 0,
+  "Month": "Nov",
+  "OperatingSystems": 1,
+  "Browser": 1,
+  "Region": 1,
+  "TrafficType": 1,
+  "VisitorType": "Returning_Visitor",
+  "Weekend": "FALSE"
+}</textarea>
+
+                    <button type="submit">Send JSON Request</button>
+                </form>
+                <pre id="genericOutput" class="output"></pre>
+            </article>
+        </section>
+    </main>
+
+    <script src="api_playground.js"></script>
+</body>
+</html>

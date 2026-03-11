@@ -18,8 +18,8 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements/base.txt -c req
 RUN pip install --no-cache-dir --prefix=/install -r requirements/prod.txt -c requirements/constraints.txt
 
 COPY api.py .
+COPY gunicorn.conf.py .
 COPY model/ model/
-COPY rules/ rules/
 
 # ============================
 # Stage 2: Runtime image
@@ -38,4 +38,4 @@ COPY --from=builder /build /opt/app-smm
 EXPOSE 8000
 
 # Run the application
-CMD ["gunicorn", "--chdir", "/opt/app-smm", "-w", "5", "-b", "0.0.0.0:8000", "api:app"]
+CMD ["gunicorn", "--chdir", "/opt/app-smm", "-c", "/opt/app-smm/gunicorn.conf.py", "api:app"]
